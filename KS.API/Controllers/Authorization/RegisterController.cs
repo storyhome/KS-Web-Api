@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using KS.API.DataContract.Authorizaton;
+using KS.Business.DataContract.Authorization;
 using KS.Business.Managers.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,12 +18,21 @@ namespace KS.API.Controllers.Authorization
     public class RegisterController : Controller
         
     {
-       [HttpPost("RegisterUser")]
+        private readonly IRegisterUserManager  _registerUserManager;
+        private readonly IMapper _mapper;
+
+        public RegisterController(IRegisterUserManager registerUserManager, IMapper mapper)
+        {
+            _registerUserManager = registerUserManager;
+            _mapper = mapper;
+        }
+
+        [HttpPost("RegisterUser")]
        public async Task<IActionResult> Register([FromBody] NewUserCreateRequest userForRegister)
         {
             userForRegister.Username = userForRegister.Username.ToLower();
-            var registerManager = new RegisterUserManager();
-            await registerManager.RegisterUser(userForRegister);
+            var dto = _mapper.Map<NewUserCreateDTO>(userForRegister);
+            await _registerUserManager.RegisterUser(dto);
             return StatusCode(201);
         }
 

@@ -1,6 +1,9 @@
-﻿using KS.API.DataContract.Authorizaton;
+﻿using AutoMapper;
+using KS.API.DataContract.Authorizaton;
 using KS.Business.DataContract.Authorization;
 using KS.Business.Engines.Authorization;
+using KS.Database.Authorization.Invokers;
+using KS.Database.DataContract.Authorization;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -10,41 +13,33 @@ namespace KS.Business.Managers.Authorization
 {
     public class RegisterUserManager : IRegisterUserManager
     {
-        public Task<NewUserCreateDTO> RegisterUser(NewUserCreateRequest userRequest)
+        private readonly IUserRegisterInvoker _userRegisterInvoker;
+        private readonly IMapper _mapper;
+
+        public RegisterUserManager(IUserRegisterInvoker userRegisterInvoker, IMapper mapper)
         {
-            NewUserCreateDTO dto = PrepareUserDTOForRegister(userRequest);
+            _userRegisterInvoker = userRegisterInvoker;
+            _mapper = mapper;
 
-            // -- Create an instance of the Engine
-            // -- Call CreatePasswordHash Method
-            // -- Pass variable into password hash
-            // -- Prepare the DTO object for the next layer
-            // -- Instantiate the class for the Database
-            // -- Call the Invoker method in the DAL
 
-            throw new Exception();
+        }
+        public async Task<bool> RegisterUser(NewUserCreateDTO userDTO)
+        {
+            var rao = PrepareUserRAOForRegister(userDTO);
+
+            return await _userRegisterInvoker.InvokeRegisterUserCommand(rao);
         }
 
-        private NewUserCreateDTO PrepareUserDTOForRegister(NewUserCreateRequest userRequest)
+        private UserRegisterRAO PrepareUserRAOForRegister(NewUserCreateDTO userDTO)
         {
             byte[] passwordHash, passwordSalt;
             var hashEngine = new CreatePasswordHashEngine();
-            hashEngine.CreatePasswordHash(userRequest.Password, out passwordHash, out passwordSalt);
-            var userDTO = MapUserRequestObjectToDTO( userRequest, passwordHash, passwordSalt);
+            hashEngine.CreatePasswordHash(userDTO.Password, out passwordHash, out passwordSalt);
 
-            return userDTO;
-        }
-
-        private NewUserCreateDTO MapUserRequestObjectToDTO(NewUserCreateRequest userRequest, byte[] passwordHash, byte[] passwordSalt)
-        {
-            var userDTO =
-                new NewUserCreateDTO
-                {
-                    Username = userRequest.Username,
-                    PasswordHash = passwordHash,
-                    PasswordSalt = passwordSalt
-                };
-
-                return userDTO;
+            var rao = _mapper.Map<UserRegisterRAO>(userDTO);
+            rao.PasswordHash = passwordHash;
+            rao.PasswordSalt = passwordSalt;
+            return rao;
         }
     }
 }

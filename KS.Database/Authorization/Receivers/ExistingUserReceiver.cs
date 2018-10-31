@@ -20,11 +20,11 @@ namespace KS.Database.Authorization.Receivers
             var userEntity = _mapper.Map<UserEntity>(userRAO);
              return await GetUserByUserName(userEntity);
         }
-        public async Task<bool> GetUserByUserName(u)
+        public async Task<bool> GetUserByUserName(UserEntity userEntity)
         {
-
             await _context.UserTableAccess.AddAsync(userEntity);
             return await _context.SaveChangesAsync() == 1;
+
         }
 
        

@@ -20,8 +20,6 @@ namespace KS.Business.Managers.Authorization
         {
             _userRegisterInvoker = userRegisterInvoker;
             _mapper = mapper;
-
-
         }
         public async Task<bool> RegisterUser(NewUserCreateDTO userDTO)
         {

@@ -28,7 +28,6 @@ namespace KS.API
         {
             Configuration = configuration;
         }
-
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -38,17 +37,18 @@ namespace KS.API
             {
                 mc.AddProfile(new MappingProfile());
             });
-
             IMapper mapper = mappingConfig.CreateMapper();
-
             services.AddSingleton(mapper);
-
             services.AddDbContext<KSContext>(x => x.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddScoped<IRegisterUserManager, RegisterUserManager>();
             services.AddScoped<IAuthorizationCommand, RegisterUserCreateCommand>();
             services.AddScoped<IUserRegisterInvoker, RegisterUserCreateInvoker>();
             services.AddScoped<IAuthorizationReceiver, RegisterUserCreateReceiver> ();
+            services.AddScoped<IExistingUserCommand, ExistingUserCommand>();
+            services.AddScoped<IExistingUserInvoker, ExistingUserInvoker>();
+            services.AddScoped<IExistingUserReceiver, ExistingUserReceiver>();
+            services.AddScoped<ILoginManager, LoginManager>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -62,7 +62,6 @@ namespace KS.API
             {
                 app.UseHsts();
             }
-
             app.UseHttpsRedirection();
             app.UseMvc();
         }

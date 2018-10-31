@@ -20,13 +20,10 @@ namespace KS.Business.Managers.Authorization
 
             _existingUserInvoker = existingUserInvoker;
             _mapper = mapper;
-
-
         }
         public async Task<bool>LoginUser(LoginUserCreateDTO userDTO)
         {
             var rao = PrepareUserRAOForLogin(userDTO);
-
             return await _existingUserInvoker.InvokeLoginUserCommand(rao);
         }
 
@@ -35,7 +32,6 @@ namespace KS.Business.Managers.Authorization
             byte[] passwordHash, passwordSalt;
             var hashEngine = new CreatePasswordHashEngine();
             hashEngine.CreatePasswordHash(userDTO.Password, out passwordHash, out passwordSalt);
-
             var rao = _mapper.Map<LoginRAO>(userDTO);
             rao.PasswordHash = passwordHash;
             rao.PasswordSalt = passwordSalt;

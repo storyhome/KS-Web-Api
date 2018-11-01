@@ -8,6 +8,8 @@ using KS.Business.DataContract.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
+//TODO: 8 Call GTFU and capture the token string
+//TODO: 9 Change return from status code to OK and return (token string, receive user)
 namespace KS.API.Controllers.Authorization
 {
     [Route("api/[controller]")]
@@ -30,7 +32,8 @@ namespace KS.API.Controllers.Authorization
             loginRequest.Username = loginRequest.Username.ToLower();
             var dto = _mapper.Map<GetLoginUserDTO>(loginRequest);
             var receivedExistinguser = await _loginManager.LoginUser(dto);
-            return StatusCode(200);
+            string tokenString = _loginManager.GenerateTokenForUser(receivedExistinguser);
+            return Ok(new { tokenString, receivedExistinguser });
         }   
         
 

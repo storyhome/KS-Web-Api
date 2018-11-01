@@ -31,6 +31,8 @@ namespace KS.API.Controllers.Authorization
             var dto = _mapper.Map<GetLoginUserDTO>(loginRequest);
             var receivedExistinguser = await _loginManager.LoginUser(dto);
             return StatusCode(200);
-        }                        
+        }   
+        
+
     }
 }

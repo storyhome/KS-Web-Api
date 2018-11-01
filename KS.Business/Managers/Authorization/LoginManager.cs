@@ -29,7 +29,7 @@ namespace KS.Business.Managers.Authorization
 
             if (verifyPasswordHashEngine.VerifyPasswordHash(userDTO.Password,receivedUser.PasswordHash,receivedUser.PasswordSalt))
             {
-                var receivedUserDTO = Mapper.Map<ReceivedExistingDTO>(receivedUser);
+                var receivedUserDTO = _mapper.Map<ReceivedExistingDTO>(receivedUser);
                 return receivedUserDTO;
             }
 

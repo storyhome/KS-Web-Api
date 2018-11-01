@@ -1,12 +1,14 @@
-﻿using System;
+﻿using KS.Business.DataContract.Authorization;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace KS.Database.DataContract.Authorization
 {
-   public interface IExistingUserCommand
+    public interface IExistingUserCommand
     {
-        Task<bool> Execute(LoginRAO userRAO);
+        Task<ReceivedExistingDTO> Execute(LoginRAO userRAO);
     }
 }
+

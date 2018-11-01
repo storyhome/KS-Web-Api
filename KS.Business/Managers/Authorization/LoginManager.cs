@@ -21,13 +21,22 @@ namespace KS.Business.Managers.Authorization
             _existingUserInvoker = existingUserInvoker;
             _mapper = mapper;
         }
-        public async Task<bool>LoginUser(LoginUserCreateDTO userDTO)
+        public async Task<ReceivedExistingDTO> LoginUser(GetLoginUserDTO userDTO)
         {
             var rao = PrepareUserRAOForLogin(userDTO);
-            return await _existingUserInvoker.InvokeLoginUserCommand(rao);
-        }
+            var receivedUser =  await _existingUserInvoker.InvokeLoginUserCommand(rao);
+            var verifyPasswordHashEngine = new VerifyPasswordHashEngine();
 
-        private LoginRAO PrepareUserRAOForLogin(LoginUserCreateDTO userDTO)
+            if (verifyPasswordHashEngine.VerifyPasswordHash(userDTO.Password,receivedUser.PasswordHash,receivedUser.PasswordSalt))
+            {
+                var receivedUserDTO = Mapper.Map<ReceivedExistingDTO>(receivedUser);
+                return receivedUserDTO;
+            }
+
+            return null;
+        }
+                   
+                private LoginRAO PrepareUserRAOForLogin(GetLoginUserDTO userDTO)
         {
             byte[] passwordHash, passwordSalt;
             var hashEngine = new CreatePasswordHashEngine();

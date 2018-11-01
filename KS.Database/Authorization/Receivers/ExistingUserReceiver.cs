@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
+using KS.Business.DataContract.Authorization;
 using KS.Database.Contexts;
 using KS.Database.DataContract.Authorization;
 using KS.Database.Entities;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -11,22 +13,19 @@ namespace KS.Database.Authorization.Receivers
 {
     public class ExistingUserReceiver : IExistingUserReceiver
     {
-
         private readonly KSContext _context;
         private readonly IMapper _mapper;
 
-        public async Task<bool> LoginUser(LoginRAO userRAO)
+        public ExistingUserReceiver(KSContext context, IMapper mapper)
         {
-            var userEntity = _mapper.Map<UserEntity>(userRAO);
-             return await GetUserByUserName(userEntity);
-        }
-        public async Task<bool> GetUserByUserName(UserEntity userEntity)
-        {
-            await _context.UserTableAccess.AddAsync(userEntity);
-            return await _context.SaveChangesAsync() == 1;
-
+            _context = context;
+            _mapper = mapper;
         }
 
-       
+        public async Task<ReceivedExistingDTO> LoginUser(LoginRAO userRAO)
+        {
+            var userEntity = await _context.UserTableAccess.FirstOrDefaultAsync(x => x.Username == userRAO.UserName);
+            return _mapper.Map<ReceivedExistingDTO>(userEntity);
+        }
     }
 }

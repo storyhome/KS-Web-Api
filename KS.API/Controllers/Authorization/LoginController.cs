@@ -26,11 +26,11 @@ namespace KS.API.Controllers.Authorization
         [HttpPost("LoginUser")]
         public async Task<IActionResult> LoginUser([FromBody] LoginRequest loginRequest)
         {
+            
             loginRequest.Username = loginRequest.Username.ToLower();
-            var dto = _mapper.Map<LoginUserCreateDTO>(loginRequest);
-            await _loginManager.LoginUser(dto);
+            var dto = _mapper.Map<GetLoginUserDTO>(loginRequest);
+            var receivedExistinguser = await _loginManager.LoginUser(dto);
             return StatusCode(200);
-        }
-
+        }                        
     }
 }

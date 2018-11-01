@@ -7,7 +7,7 @@ namespace KS.Business.DataContract.Authorization
 {
     public interface ILoginManager
     {
-        Task<bool> LoginUser(LoginUserCreateDTO userDTO);
+        Task<ReceivedExistingDTO> LoginUser(GetLoginUserDTO userDTO);
     }
 }
 

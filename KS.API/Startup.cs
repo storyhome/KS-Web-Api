@@ -65,5 +65,7 @@ namespace KS.API
             app.UseHttpsRedirection();
             app.UseMvc();
         }
+
+        
     }
 }
